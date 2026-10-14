@@ -12,6 +12,8 @@ The current raw-extract exploratory profile and care-equity module read the raw 
 
 The ZIP is the **complete supplied archive**, not a verified copy of the entire SEER registry. Original export filters, registry coverage, exact submission version, observation cutoff, extraction query and data-use agreement have not been independently supplied/verified. The SEER-like field names are evidence of schema, not proof of population representativeness. Consequently, findings must remain internal descriptions of the supplied files.
 
+The separate interactive [Cancer Patient Atlas](TREATMENT_MODEL.md) uses the four CancerProject2025 text exports (Brain, Breast, Prostate, Skin) plus the raw Liver extract. These five source-specific analyses do not pool cancer types or link patients across the coursework archives. The surgery-assignment model predicts source-recorded surgery among known codes, not treatment benefit. Stage is absent from the four course exports and present as `Combined Summary Stage (2004+)` in the Liver extract.
+
 ## Units and populations
 
 | Component | Input and unit | Inclusion rule | Endpoint |

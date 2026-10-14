@@ -24,4 +24,7 @@ jobs:
         with:
           node-version: '22'
       - run: node scripts/check_dashboard.mjs --site .runtime/demo-site
+      - run: uv run python scripts/patient_studies.py --synthetic --output .runtime/patient-atlas-fixtures
+      - run: uv run python scripts/build_patient_site.py --source .runtime/patient-atlas-fixtures --target .runtime/patient-atlas-site
+      - run: node scripts/check_patient_dashboard.mjs --site .runtime/patient-atlas-site
     # No data upload, build-artifact upload, or Pages deployment is authorized.

@@ -1,7 +1,7 @@
 [project]
 name = "cancer-suicide-risk-analysis"
 version = "0.1.0"
-description = "Reproducible audit, survival analysis, and ML comparison for the CSRA coursework dataset"
+description = "Privacy-aware cancer cohort pipelines, treatment patterns, and temporal survival evaluation"
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "pandas>=2.2,<3",
