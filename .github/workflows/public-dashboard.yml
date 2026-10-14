@@ -1,0 +1,48 @@
+name: Publish synthetic Cancer Patient Atlas
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: '0.13.0'
+          python-version: '3.12'
+          enable-cache: true
+      - run: uv sync --locked
+      - name: Generate invented-only cohorts
+        run: uv run python scripts/patient_studies.py --synthetic --output .runtime/public-demo-source
+      - name: Build static dashboard
+        run: uv run python scripts/build_patient_site.py --source .runtime/public-demo-source --target .runtime/public-demo-site
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Enforce public payload allowlist
+        run: node scripts/check_public_demo.mjs --site .runtime/public-demo-site
+      - name: Test dashboard interactions against invented fixtures
+        run: node scripts/check_patient_dashboard.mjs --site .runtime/public-demo-site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .runtime/public-demo-site
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

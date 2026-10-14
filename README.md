@@ -12,6 +12,8 @@ The source data and all real-data outputs are confidential and are not included 
 
 ## Explore the dashboard
 
+**Public interactive demo:** [Open the Cancer Patient Atlas](https://kashishchaudhari.github.io/cancer-survivorship/). This GitHub Pages site is built from invented fixtures only. It contains no supplied dataset or real-data results; individual profile scoring is disabled. The real-data dashboard and its outputs remain local.
+
 Run the project locally with authorized source files to explore:
 
 - age and recorded-sex distributions, treatment-timing histograms, cumulative distributions, and box plots with standard deviation, variance, median, and IQR;
@@ -67,4 +69,4 @@ uv run python -m pytest -q
 uv run python scripts/check_repository_privacy.py
 ```
 
-GitHub Actions runs code tests and invented fixtures only. It does not access source archives, upload build artifacts, or deploy a dashboard. The wider [portfolio brief](docs/PORTFOLIO_PLAN.md) explains how this Atlas stays distinct from the survivorship suicide-outcome analysis.
+GitHub Actions runs tests and invented fixtures only. A separate deployment workflow publishes the synthetic static dashboard; it never accesses source archives or real-data outputs. The wider [portfolio brief](docs/PORTFOLIO_PLAN.md) explains how this Atlas stays distinct from the survivorship suicide-outcome analysis.

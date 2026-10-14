@@ -16,6 +16,7 @@ for(const view of ['distribution','care','treatment-model','survival','evaluatio
 }
 const catalog=JSON.parse(readFileSync(`${site}/data/catalog.json`,'utf8'));
 assert.equal(catalog.studies.length,5,'four course archives and the independent Liver raw study');
+assert.equal(catalog.synthetic,true,'the generated site fixture must be synthetic');
 const data=Object.fromEntries(catalog.studies.map(item=>[item.cohort,JSON.parse(readFileSync(`${site}/data/${item.file}`,'utf8'))]));
 for(const cohort of ['Brain','Breast','Prostate','Skin']) assert.equal(data[cohort].stage_filters.length,0,`${cohort} has no stage field`);
 assert.ok(data.Liver.stage_filters.length>0,'invented Liver fixture exercises the stage controls');
@@ -24,6 +25,10 @@ for(const study of Object.values(data)){
   assert.ok(study.treatment_assignment.test,'synthetic treatment assignment model should be evaluable');
   assert.ok(!JSON.stringify(study).includes(`invented-${study.cohort}-`),'no patient ID values may enter dashboard JSON');
 }
+// Exercise local-only interaction paths with in-memory synthetic fixtures. This
+// does not alter the generated files or public demo payload.
+catalog.synthetic=false;
+for(const study of Object.values(data))study.synthetic=false;
 
 class Element{
   constructor(id=''){this.id=id;this.value='All';this.textContent='';this.disabled=false;this.checked=false;this.options=[];this.children=[];this.listeners={};this.dataset={};this.classList={toggle(){},add(){},remove(){}};}
