@@ -11,9 +11,10 @@ const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)]
 for (const script of scripts) new vm.Script(script);
 new vm.Script(readFileSync('dashboard/engineering.js', 'utf8'));
 new vm.Script(readFileSync('dashboard/care.js', 'utf8'));
+new vm.Script(readFileSync('dashboard/observatory.js', 'utf8'));
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
 assert.equal(new Set(ids).size, ids.length, 'Duplicate DOM IDs');
-for (const view of ['eda', 'survival', 'models', 'care', 'engineering', 'data']) {
+for (const view of ['overview', 'eda', 'survival', 'models', 'care', 'engineering', 'data']) {
   assert.ok(ids.includes(view), `Missing ${view} view`);
   assert.ok(html.includes(`data-view="${view}"`), `Missing ${view} navigation`);
 }
@@ -24,16 +25,18 @@ console.log(`Dashboard syntax and navigation checks passed (${ids.length} unique
 // Execute the actual initialization against real aggregate CSVs and a small DOM
 // double. This catches runtime name collisions and mis-scoped event handlers.
 const elements = new Map(ids.map(id => [id, {
-  id, value: 'All', options: [{value:'All'}], innerHTML:'', textContent:'',
+  id, value: 'All', options: [{value:'All'}], innerHTML:'', textContent:'', style:{},
+  setAttribute(name,value){this[name]=value;},
   listeners: {}, children: [], dataset:{},
   classList:{remove(){},toggle(){}},
   addEventListener(event, handler){this.listeners[event] = handler;},
   insertAdjacentHTML(_position, text){this.innerHTML += text;},
   append(child){this.children.push(child);},
 }]));
-const viewButtons = ['eda','survival','models','care','engineering','data'].map(view => ({
+const viewButtons = ['overview','eda','survival','models','care','engineering','data'].map(view => ({
   dataset:{view}, classList:{toggle(){}}, listeners:{},
   addEventListener(event,handler){this.listeners[event]=handler;},
+  click(){this.listeners.click();},
 }));
 const variableButtons = ['cancer_site','sex','age_cat','race'].map(variable => ({
   dataset:{variable}, classList:{remove(){},add(){}},
@@ -44,7 +47,7 @@ const context = vm.createContext({
   Intl, console, setTimeout,
   document:{
     getElementById: id => elements.get(id),
-    querySelector: selector => elements.get(selector.slice(1)),
+    querySelector: selector => selector==='[data-view="care"]'?viewButtons.find(button=>button.dataset.view==='care'):elements.get(selector.slice(1)),
     querySelectorAll: selector => selector === '[data-view]' ? viewButtons : selector === '[data-variable]' ? variableButtons : [],
     createElement: () => ({textContent:'',children:[],append(child){this.children.push(child);this.lastChild=child;}}),
   },
@@ -88,3 +91,19 @@ assert.equal(elements.get('cohort').value,'Brain','Care filter changed explorato
 viewButtons.find(button=>button.dataset.view==='care').listeners.click();
 assert.equal(elements.get('cohort-filters').hidden,true,'Exploratory filters must be hidden in care view');
 console.log('Care-equity initialization, filters, survival estimates and population boundaries passed.');
+vm.runInContext(readFileSync('dashboard/observatory.js','utf8'),context);
+await new Promise(resolve=>setTimeout(resolve,50));
+assert.ok(!elements.get('brief-scope').textContent.includes('issue'),elements.get('brief-scope').textContent);
+assert.ok(plotted.has('brief-constellation'),'Coverage constellation did not render');
+assert.equal(Number(elements.get('brief-total').textContent.replaceAll(',','')),unfilteredTotal,'KPI index count disagrees with descriptive count');
+const careTimingBefore=elements.get('brief-care-timing').textContent;
+elements.get('brief-cohort').value='Brain';
+elements.get('brief-cohort').listeners.change();
+assert.ok(Number(elements.get('brief-total').textContent.replaceAll(',',''))<unfilteredTotal,'KPI cohort selection did not update counts');
+assert.equal(elements.get('brief-care-timing').textContent,careTimingBefore,'Index cohort selector changed separate care study');
+assert.equal(elements.get('brief-coverage').textContent,'100.0%','Known-outcome coverage has wrong denominator');
+viewButtons.find(button=>button.dataset.view==='overview').listeners.click();
+assert.equal(elements.get('page-intro').hidden,true,'KPI page must use its own research-brief heading');
+elements.get('open-care-study').listeners.click();
+assert.equal(elements.get('cohort-filters').hidden,true);
+console.log('KPI initialization, denominators, cohort selection, and independent care-study navigation passed.');

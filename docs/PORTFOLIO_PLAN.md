@@ -41,7 +41,7 @@ Milestone 1 is implemented locally. The care-equity audit and descriptive dashbo
 
 ## Dashboard experience
 
-Five views: **Exploratory profile**, **Survival & competing risks**, **Model evaluation**, **Care & equity**, **Pipeline & quality**. Keep study populations visible and separate. Make the model story about average precision relative to event prevalence, calibration, and uncertainty rather than accuracy alone.
+Seven views: **KPI observatory**, **Exploratory profile**, **Survival & competing risks**, **Model evaluation**, **Care & equity**, **Pipeline & quality**, and **Data & reliability**. The KPI observatory is the opening research brief; its definition and visual rationale are in [the design notes](KPI_DESIGN.md). Keep study populations visible and separate. Make the model story about average precision relative to event prevalence, calibration, and uncertainty rather than accuracy alone.
 
 Implemented visual upgrade: a cancer-site × age heatmap with a switch between outcome coverage and recorded-outcome fraction, tooltips showing events and known-outcome counts, and an explicit sparse-group label. Next: add an internal model comparison explorer using existing bootstrap intervals before adding more algorithms.
 

@@ -2,6 +2,8 @@
 
 A healthcare data-science research project combining reproducible ETL, cohort auditing, internal model evaluation, survival analysis, and an interactive dashboard.
 
+The dashboard opens with a custom **KPI observatory**: an editorial research brief, cohort-selectable counts, an interactive coverage constellation, a missing-outcome strip, and a separate care-study bridge. Each KPI explains its denominator and study population. The visual design and metrics are documented in [the KPI design notes](docs/KPI_DESIGN.md).
+
 **Confidential-data policy:** patient data, derived tables, figures, workbooks, and data-derived reports remain local. This repository is intended to contain code and methodological documentation only. No data redistribution or real-data hosting is authorized. A private repository alone does not grant permission to upload a restricted dataset.
 
 ## Understand the data

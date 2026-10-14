@@ -106,7 +106,7 @@ def build(source: Path, target: Path, revision: str = "local", synthetic: bool =
         raise ValueError("Synthetic fixtures must be explicitly labeled with --synthetic")
     if source.resolve() == (target / "data").resolve():
         raise ValueError("Source and release data directory must be distinct")
-    allowed = {"index.html", "engineering.js", "care.js", "data/manifest.json", "data/care_summary.json"} | {f"data/{name}" for name in CONTRACTS}
+    allowed = {"index.html", "engineering.js", "care.js", "observatory.js", "observatory.css", "data/manifest.json", "data/care_summary.json"} | {f"data/{name}" for name in CONTRACTS}
     if target.exists():
         unexpected = [path.relative_to(target).as_posix() for path in target.rglob("*") if path.is_file() and path.relative_to(target).as_posix() not in allowed]
         if unexpected:
@@ -146,6 +146,8 @@ def build(source: Path, target: Path, revision: str = "local", synthetic: bool =
     shutil.copyfile(ROOT / "dashboard/index.html", target / "index.html")
     shutil.copyfile(ROOT / "dashboard/engineering.js", target / "engineering.js")
     shutil.copyfile(ROOT / "dashboard/care.js", target / "care.js")
+    for asset in ["observatory.js", "observatory.css"]:
+        shutil.copyfile(ROOT / "dashboard" / asset, target / asset)
     shutil.copyfile(source / "care_summary.json", target / "data/care_summary.json")
     for name in CONTRACTS:
         shutil.copyfile(source / name, target / "data" / name)
