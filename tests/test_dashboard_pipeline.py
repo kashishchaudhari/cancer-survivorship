@@ -57,7 +57,8 @@ def test_release_is_allowlisted_and_denominators_reconcile(tmp_path, synthetic_s
     assert json.loads((tmp_path / "site/data/manifest.json").read_text())["revision"] == "test-revision"
 
 
-def test_invalid_input_preserves_previous_release(tmp_path):
+def test_invalid_input_preserves_previous_release(tmp_path, monkeypatch):
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
     target = tmp_path / "site"
     target.mkdir()
     (target / "index.html").write_text("previous release")
@@ -95,7 +96,8 @@ def test_suppressed_care_counts_remain_missing(tmp_path):
     assert validate_table(path)[0]["patient_count"] == ""
 
 
-def test_synthetic_fixtures_cannot_be_presented_as_research(tmp_path, synthetic_source):
+def test_synthetic_fixtures_cannot_be_presented_as_research(tmp_path, synthetic_source, monkeypatch):
+    monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
     with pytest.raises(ValueError, match="explicitly labeled"):
         build(synthetic_source,tmp_path / "site")
 
