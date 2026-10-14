@@ -1,5 +1,6 @@
-"""Temporally held-out all-cause survival research; no treatment recommendation."""
+"""Patient-holdout all-cause survival research; no treatment recommendation."""
 import json
+from evaluation_design import partitions, development_folds, SPLIT_RULE, SEED
 from pathlib import Path
 
 import joblib
@@ -88,38 +89,45 @@ def evaluate(model,encoder,columns,training,testing):
     return {"c_index":c_index(model,x,testing),"metrics":metrics,"calibration":calibration,"subgroups":subgroup}
 
 
-def train(frame,cohort,model_dir,synthetic=False):
+def train(frame,cohort,model_dir,synthetic=False,strategy="patient",save_artifact=True):
     eligible=frame.loc[frame.followup_valid & frame.year.between(2010,2017) & frame.age_mid.notna()].copy()
-    development=eligible.loc[eligible.year.le(2013)]
-    validation=eligible.loc[eligible.year.between(2014,2015)]
-    test=eligible.loc[eligible.year.between(2016,2017)]
-    counts={name:{"patients":len(part),"deaths":int(part.death.sum())} for name,part in [("development",development),("validation",validation),("test",test)]}
-    if any(len(part)<50 or part.death.sum()<10 for part in [development,validation,test]):
-        return {"status":"Not fitted: insufficient temporal split support","splits":counts}
+    try:
+        development,validation,test=partitions(eligible,"death",strategy)
+    except ValueError as error:
+        return {"status":f"Not fitted: {error}"}
+    parts=[("development",development),("test",test)]
+    if validation is not None: parts.insert(1,("validation",validation))
+    counts={name:{"patients":len(part),"deaths":int(part.death.sum())} for name,part in parts}
+    if any(len(part)<50 or part.death.sum()<10 for _,part in parts):
+        return {"status":"Not fitted: insufficient split support","splits":counts}
     assert set(development["Patient ID"]).isdisjoint(set(test["Patient ID"]))
-    assert set(validation["Patient ID"]).isdisjoint(set(test["Patient ID"]))
     categories=["sex","grade","income"]
     if eligible.stage.nunique()>1 and eligible.stage.ne("Unknown / unavailable").any(): categories.append("stage")
     if cohort=="Breast" and development.subtype.nunique()>1: categories.append("subtype")
+    folds=[(development,validation)] if strategy=="temporal" else development_folds(development,"death")
     candidates=[]
     for penalty in [.01,.1,1.]:
-        encoder=encode_setup(categories)
-        model,columns=fit_model(development,encoder,penalty)
-        x,_=design(encoder,validation,columns)
-        score=c_index(model,x,validation)
-        candidates.append({"penalty":penalty,"validation_c_index":score})
+        scores=[]
+        for fitting,checking in folds:
+            encoder=encode_setup(categories)
+            model,columns=fit_model(fitting,encoder,penalty)
+            x,_=design(encoder,checking,columns)
+            score=c_index(model,x,checking)
+            if score is not None: scores.append(score)
+        candidates.append({"penalty":penalty,"validation_c_index":float(np.mean(scores)) if scores else None,"fold_scores":scores})
     selected=max(candidates,key=lambda row:row["validation_c_index"] if row["validation_c_index"] is not None else -1)
-    training=pd.concat([development,validation],ignore_index=True)
+    training=pd.concat([development,validation],ignore_index=True) if validation is not None else development
     encoder=encode_setup(categories)
     model,columns=fit_model(training,encoder,selected["penalty"])
     evaluation=evaluate(model,encoder,columns,training,test)
     options={field:sorted(training[field].dropna().astype(str).unique()) for field in categories}
     ages=sorted(float(value) for value in training.age_mid.unique())
-    model_dir=Path(model_dir); model_dir.mkdir(parents=True,exist_ok=True)
-    # Model objects may contain training outcomes; keep these artifacts local.
-    joblib.dump({"model":model,"encoder":encoder,"columns":columns,"categories":categories,"options":options,"ages":ages,"cohort":cohort,"synthetic":synthetic},model_dir/f"{cohort.lower()}.joblib")
+    if save_artifact:
+        model_dir=Path(model_dir); model_dir.mkdir(parents=True,exist_ok=True)
+        # Model objects may contain training outcomes; keep these artifacts local.
+        joblib.dump({"model":model,"encoder":encoder,"columns":columns,"categories":categories,"options":options,"ages":ages,"cohort":cohort,"synthetic":synthetic},model_dir/f"{cohort.lower()}{'-temporal' if strategy == 'temporal' else ''}.joblib", compress=3)
     coefficients=[{"feature":str(feature),"hazard_ratio":float(np.exp(coef))} for feature,coef in model.params_.items()]
-    return {"status":"Fitted / internal temporal evaluation","synthetic":synthetic,"endpoint":"All-cause survival","horizons":HORIZONS,"model":"Penalized Cox proportional hazards","splits":counts,"split_rule":"Index years 2010–2013 development; 2014–2015 validation; 2016–2017 untouched test. No patient overlap.","selected_penalty":selected["penalty"],"validation_candidates":candidates,"evaluation":evaluation,"coefficients":coefficients,"options":options,"ages":ages,"limitations":["Retrospective research features; their availability at a clinical decision time is not verified.","An explicit source stage field is included only where present; the four CancerProject archives do not contain one.","Treatment fields, follow-up duration, vital status and diagnosis year are excluded from predictors.","Source age bands use midpoint approximations; 85+ is represented by 87.5.","Zero-month follow-up uses 0.5 month for the positive-duration Cox model.","Proportional hazards, source representativeness and external calibration remain unvalidated.","Income is area context, not individual income.","No treatment benefit or patient treatment recommendation is estimated."]}
+    return {"status":"Fitted / internal temporal evaluation" if strategy=="temporal" else "Fitted / internal patient holdout","strategy":strategy,"seed":SEED,"cv_folds":len(folds),"synthetic":synthetic,"endpoint":"All-cause survival","horizons":HORIZONS,"model":"Penalized Cox proportional hazards","splits":counts,"split_rule":"2010–2013 development; 2014–2015 validation; 2016–2017 test. No patient overlap." if strategy=="temporal" else SPLIT_RULE,"selected_penalty":selected["penalty"],"validation_candidates":candidates,"evaluation":evaluation,"coefficients":coefficients,"options":options,"ages":ages,"limitations":["Retrospective research features; their availability at a clinical decision time is not verified.","An explicit source stage field is included only where present; the four CancerProject archives do not contain one.","Treatment fields, follow-up duration, vital status and diagnosis year are excluded from predictors.","Source age bands use midpoint approximations; 85+ is represented by 87.5.","Zero-month follow-up uses 0.5 month for the positive-duration Cox model.","Proportional hazards, source representativeness and external calibration remain unvalidated.","Income is area context, not individual income.","No treatment benefit or patient treatment recommendation is estimated."]}
 
 
 def predict(artifact,values):

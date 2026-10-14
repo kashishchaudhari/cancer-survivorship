@@ -2,7 +2,7 @@
 
 ## Research question
 
-Within each supplied cancer cohort, how well can demographic and tumor descriptors predict whether primary-site surgery appears in the source record? How does recorded treatment coding vary across the groups we can observe, and how well does a separate all-cause survival model rank later-year outcomes?
+Within each supplied cancer cohort, how well can demographic and tumor descriptors predict whether primary-site surgery appears in the source record? How does recorded treatment coding vary across the groups we can observe, and how well does a separate all-cause survival model rank held-out outcomes?
 
 This is a model of **recorded historical treatment assignment**. It does not estimate treatment effectiveness, the best treatment for a patient, or a treatment effect. The data lack the clinical condition, anatomy, comorbidity, patient preference, contraindication, and treatment-selection details needed to answer those questions.
 
@@ -20,15 +20,19 @@ Brain, Breast, Prostate, and Skin coursework extracts contain no usable stage co
 
 The binary target is a known primary-site surgery code: `00` is coded as no recorded surgery; codes `01` through `90` are coded as surgery recorded. Unknown and other codes are excluded, and every dashboard label names this denominator. This is not a complete account of all surgical procedures.
 
-The model is regularized logistic regression. Inputs are source-age-band midpoint, recorded sex, grade, area-income category, source stage where available, and Breast subtype where supported. The split is by index diagnosis year: development 2010–2013, validation 2014–2015, and held-out test 2016–2017. The validation period chooses among four regularization strengths using average precision. The final model is fit on development plus validation and evaluated once on later years.
+The model is regularized logistic regression. Inputs are source-age-band midpoint, recorded sex, grade, area-income category, source stage where available, and Breast subtype where supported. After within-source patient deduplication, the primary evaluation reserves a reproducible 20% patient test set stratified by surgery recording (seed 20261014). Up to five stratified folds within the remaining 80% select among four regularization strengths by mean average precision. Imputation and encoding are fitted separately within each training fold. The selected pipeline is refitted on the full development set and evaluated on the patient holdout.
+
+Model eligibility remains 2010–2017 to retain the existing source era: the legacy grade field ends in 2017 and Breast subtype begins in 2010. This is a feature-availability restriction, not a requirement to split patients by diagnosis year. Broader eras require harmonized predictors and a new cohort audit.
+
+The previous design (2010–2013 development, 2014–2015 validation, 2016–2017 test) is retained as a separately fitted temporal sensitivity analysis. Its validation period selects regularization; its final model fits 2010–2015. Neither test set selects the primary model. The two evaluations have overlapping source patients and different test populations, so they are not independent replications or a causal comparison of splitting strategies.
 
 The dashboard reports test average precision beside test prevalence, ROC AUC, Brier score, and grouped calibration. Average precision is interpreted against prevalence because surgery recording is imbalanced. The API returns a probability of source-recorded surgery for a supported profile and labels it as a historical coding-pattern estimate. It never describes that probability as a treatment recommendation.
 
 ## Survival model
 
-Each study also fits a penalized Cox model for all-cause survival at 12, 36, and 60 months. It uses the same temporal split, selects regularization on validation, compares against a development/validation Kaplan–Meier baseline, and reports IPCW Brier scores, grouped held-out calibration, and subgroup concordance. Treatment, follow-up, vital status, and diagnosis year are excluded as predictors. Zero-month records are represented at 0.5 months only for the Cox fit; descriptive survival retains the recorded time.
+Each study also fits a penalized Cox model for all-cause survival at 12, 36, and 60 months. It uses a separate 80/20 patient split stratified by all-cause death status, selects regularization by mean development-fold concordance, compares against a development Kaplan–Meier baseline, and reports IPCW Brier scores, grouped held-out calibration, and subgroup concordance. Treatment, follow-up, vital status, and diagnosis year are excluded as predictors. Zero-month records are represented at 0.5 months only for the Cox fit; descriptive survival retains the recorded time.
 
-This remains internal temporal evaluation of supplied historical data. It is not external validation. Population shift, treatment-selection bias, incomplete covariates, non-proportional hazards, and source extraction rules may change performance. Subgroup metrics have sample and event-count constraints. The dashboard labels its estimate as a research-model output, not a clinical prognosis.
+Stratifying death status does not equalize follow-up or remove censoring bias. The same horizon-support checks apply to both evaluations. This remains a revised internal evaluation of supplied historical data. Earlier project results have already been inspected; the new split is not an independent confirmatory validation. It is not external validation. Population shift, treatment-selection bias, incomplete covariates, non-proportional hazards, and source extraction rules may change performance. Subgroup metrics have sample and event-count constraints. The dashboard labels its estimate as a research-model output, not a clinical prognosis.
 
 ## What a stronger treatment-benefit study needs
 
@@ -36,4 +40,4 @@ A defensible comparative-effectiveness analysis needs a specified clinical decis
 
 ## Reproducibility and privacy
 
-Run `scripts/patient_studies.py` locally, then package with `scripts/build_patient_site.py`. Patient identifiers are used only in local memory for within-source deduplication. Model files, aggregate study JSON, derived results, and predictions are ignored under `.runtime/`. CI runs invented fixtures and code checks; it does not access the source archives or publish build artifacts.
+Run `scripts/patient_studies.py` locally, then package with `scripts/build_patient_site.py`. Patient identifiers are used only in local memory for within-source deduplication. Model files, aggregate study JSON, derived results, and predictions are ignored under `.runtime/`. CI runs invented fixtures and code checks; it does not access the source archives. The Pages workflow publishes invented-only dashboard assets.

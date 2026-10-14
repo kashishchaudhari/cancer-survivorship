@@ -9,14 +9,15 @@ from patient_studies import STAGE_FIELDS, fixture, normalize, read_archive
 from treatment_assignment import predict_assignment, train_assignment
 
 
-def test_surgery_model_is_temporal_and_predicts_recorded_codes_only(tmp_path):
+def test_surgery_model_uses_patient_holdout_and_predicts_recorded_codes_only(tmp_path):
     frame = normalize(fixture("Brain", 1400))
     result = train_assignment(frame, "Brain", tmp_path, synthetic=True)
 
-    assert result["status"] == "Fitted / internal temporal evaluation"
+    assert result["status"] == "Fitted / internal patient holdout"
     assert result["target"] == "Recorded primary-site surgery among known 00 / 01–90 codes"
     assert result["splits"]["development"]["patients"] > 0
-    assert result["splits"]["validation"]["patients"] > 0
+    assert result["cv_folds"] == 5
+    assert "validation" not in result["splits"]
     assert result["splits"]["test"]["patients"] > 0
     assert "stage" not in result["features"]
     assert result["test"]["average_precision"] >= 0

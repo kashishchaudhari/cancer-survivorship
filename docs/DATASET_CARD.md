@@ -2,7 +2,7 @@
 
 ## Access and permitted use
 
-The supplied cancer data is confidential and requires permission. Raw files, patient records, prediction rows, and local runtime outputs remain local. The dataset owner approved public disclosure of the specific whole-cohort summary in [RESULTS_SUMMARY.md](RESULTS_SUMMARY.md); that approval does not extend to raw data, subgroup tables, other analyses, or future outputs. No license for code grants rights to the dataset. This card documents source, methods, and the narrow scope of that approved report.
+The supplied cancer data is confidential and requires permission. Raw files, patient records, prediction rows, and local runtime outputs remain local. The dataset owner approved public disclosure of the whole-cohort summary in [RESULTS_SUMMARY.md](RESULTS_SUMMARY.md) and the requested [Liver case study](LIVER_STUDY.md); that approval does not extend to raw data, subgroup tables, other analyses, or future outputs. No license for code grants rights to the dataset. This card documents source, methods, and the narrow scope of that approved report.
 
 ## What dataset is used?
 
@@ -59,4 +59,4 @@ The local validation report fingerprints the ZIP and identifies raw members, col
 
 ## Confidentiality and disclosure
 
-Small-cell count suppression is a display safeguard, not redistribution permission or a formal anonymization method. Exact totals, marginal tables and survival results may still permit inference about small groups. The owner approved publication of the one [aggregate report](RESULTS_SUMMARY.md), which contains whole-cohort values only. No raw file, patient-level record, individual prediction, small subgroup table, other analysis output, or local dashboard artifact is public. GitHub CI and the interactive Pages demo use invented fixtures only. Any additional data-derived disclosure requires its own permission.
+Small-cell count suppression is a display safeguard, not redistribution permission or a formal anonymization method. Exact totals, marginal tables and survival results may still permit inference about small groups. The owner approved publication of the [aggregate report](RESULTS_SUMMARY.md) and the requested [Liver case study](LIVER_STUDY.md), which contains whole-cohort values only. No raw file, patient-level record, individual prediction, small subgroup table, other analysis output, or local dashboard artifact is public. GitHub CI and the interactive Pages demo use invented fixtures only. Any additional data-derived disclosure requires its own permission.

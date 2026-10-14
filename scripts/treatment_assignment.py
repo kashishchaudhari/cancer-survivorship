@@ -1,5 +1,6 @@
-"""Temporal model of recorded primary-site surgery coding, never treatment benefit."""
+"""Patient-holdout model of recorded primary-site surgery coding, never treatment benefit."""
 from pathlib import Path
+from evaluation_design import partitions, development_folds, SPLIT_RULE, SEED
 
 import joblib
 import numpy as np
@@ -43,23 +44,27 @@ def _score(model, part):
     }
 
 
-def train_assignment(frame, cohort, model_dir, synthetic=False):
-    """Predict recorded surgery among known 00 vs 01–90 codes on later index years."""
+def train_assignment(frame, cohort, model_dir, synthetic=False, strategy="patient"):
+    """Predict recorded surgery among known 00 vs 01–90 codes within the eligible source era."""
     eligible = frame.loc[
         frame.year.between(2010, 2017)
         & frame.age_mid.notna()
         & frame.surgery.isin(["No surgery recorded (00)", "Surgery recorded"])
     ].copy()
     eligible["surgery_target"] = eligible.surgery.eq("Surgery recorded").astype(int)
-    development = eligible.loc[eligible.year.le(2013)]
-    validation = eligible.loc[eligible.year.between(2014, 2015)]
-    test = eligible.loc[eligible.year.between(2016, 2017)]
+    try:
+        development, validation, test = partitions(eligible, "surgery_target", strategy)
+    except ValueError as error:
+        return {"status": f"Not fitted: {error}", "synthetic": synthetic}
+    parts = [("development", development), ("test", test)]
+    if validation is not None:
+        parts.insert(1, ("validation", validation))
     split_counts = {
         name: {"patients": len(part), "surgery_recorded": int(part.surgery_target.sum())}
-        for name, part in [("development", development), ("validation", validation), ("test", test)]
+        for name, part in parts
     }
     minimum = 30
-    if any(len(part) < minimum or part.surgery_target.nunique() < 2 for part in [development, validation, test]):
+    if any(len(part) < minimum or part.surgery_target.nunique() < 2 for _, part in parts):
         return {"status": "Not fitted: insufficient temporal split or class support", "splits": split_counts,
                 "target": "Recorded primary-site surgery among known 00 / 01–90 codes", "synthetic": synthetic}
 
@@ -68,13 +73,16 @@ def train_assignment(frame, cohort, model_dir, synthetic=False):
         categories.append("stage")
     if cohort == "Breast" and eligible.subtype.nunique() > 1:
         categories.append("subtype")
+    folds = [(development, validation)] if strategy == "temporal" else development_folds(development, "surgery_target")
     candidates = []
     for penalty in [0.01, 0.1, 1.0, 10.0]:
-        candidate = _pipeline(categories, penalty).fit(development, development.surgery_target)
-        candidates.append({"penalty": penalty, "validation_average_precision": float(
-            average_precision_score(validation.surgery_target, candidate.predict_proba(validation)[:, 1]))})
+        scores = []
+        for fitting, checking in folds:
+            candidate = _pipeline(categories, penalty).fit(fitting, fitting.surgery_target)
+            scores.append(float(average_precision_score(checking.surgery_target, candidate.predict_proba(checking)[:, 1])))
+        candidates.append({"penalty": penalty, "validation_average_precision": float(np.mean(scores)), "fold_scores": scores})
     selected = max(candidates, key=lambda row: row["validation_average_precision"])
-    training = pd.concat([development, validation], ignore_index=True)
+    training = pd.concat([development, validation], ignore_index=True) if validation is not None else development
     model = _pipeline(categories, selected["penalty"]).fit(training, training.surgery_target)
     evaluation = _score(model, test)
     stage_note = ("The Liver source uses its explicit Combined Summary Stage field; the four CancerProject archives do not contain a usable stage field."
@@ -85,11 +93,12 @@ def train_assignment(frame, cohort, model_dir, synthetic=False):
     joblib.dump({"model": model, "cohort": cohort, "synthetic": synthetic,
                  "categories": categories, "ages": sorted(float(x) for x in training.age_mid.unique()),
                  "options": {name: sorted(training[name].dropna().astype(str).unique()) for name in categories}},
-                output / f"surgery-{cohort.lower()}.joblib")
+                output / f"surgery-{cohort.lower()}{'-temporal' if strategy == 'temporal' else ''}.joblib", compress=3)
     return {
-        "status": "Fitted / internal temporal evaluation", "synthetic": synthetic,
+        "status": "Fitted / internal temporal evaluation" if strategy == "temporal" else "Fitted / internal patient holdout",
+        "strategy": strategy, "seed": SEED, "cv_folds": len(folds), "synthetic": synthetic,
         "target": "Recorded primary-site surgery among known 00 / 01–90 codes",
-        "split_rule": "Index years 2010–2013 development; 2014–2015 validation; 2016–2017 untouched test.",
+        "split_rule": "2010–2013 development; 2014–2015 validation; 2016–2017 test." if strategy == "temporal" else SPLIT_RULE,
         "splits": split_counts, "validation_candidates": candidates,
         "selected_penalty": selected["penalty"], "features": ["age_mid", *categories],
         "ages": sorted(float(value) for value in training.age_mid.unique()),
@@ -102,7 +111,7 @@ def train_assignment(frame, cohort, model_dir, synthetic=False):
             "Unknown and other surgery codes are excluded; results describe known 00 and 01–90 codes only.",
             stage_note,
             "Clinical eligibility, comorbidity, tumor details, preferences, and treatment-selection reasons are unavailable.",
-            "Temporal internal evaluation is not external or clinical validation.",
+            "Internal evaluation is not external or clinical validation.",
         ],
     }
 

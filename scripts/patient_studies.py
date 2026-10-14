@@ -212,14 +212,16 @@ def build(folder,output,zip_path=None,synthetic=False):
                 for grade in ["All",*sorted(frame.grade.unique())]:
                     for stage in ["All",*stages]: views.append(profile(frame,age,sex,grade,stage))
         model=train(frame,cohort,output/"models",synthetic)
+        model["temporal_sensitivity"]=train(frame,cohort,output/"models",synthetic,strategy="temporal")
         from treatment_assignment import train_assignment
         treatment=train_assignment(frame,cohort,output/"models",synthetic)
+        treatment["temporal_sensitivity"]=train_assignment(frame,cohort,output/"models",synthetic,strategy="temporal")
         stage_filters=[value for value in stages if value!="Unknown / unavailable"] if source["stage_columns"] else []
-        study={"cohort":cohort,"synthetic":synthetic,"source":source,"age_filters":sorted(frame.age_band.unique()),"sex_filters":sorted(frame.sex.unique()),"grade_filters":sorted(frame.grade.unique()),"stage_filters":stage_filters,"profiles":views,"model":model,"treatment_assignment":treatment,"notes":["Cancer-patient records, not a survivor-only cohort.","No cross-cancer pooling or cross-archive linkage.","Stage is sourced only where an explicit stage field exists; grade is not a stage proxy.","Treatment model predicts source-recorded surgery assignment; it cannot identify treatment benefit or recommend care.","EDA and temporal model populations are distinct.","Surgery, radiation and chemotherapy patterns are descriptive; no treatment is recommended.","Timing is first-course management, not a modality-specific delay."]}
+        study={"cohort":cohort,"synthetic":synthetic,"source":source,"age_filters":sorted(frame.age_band.unique()),"sex_filters":sorted(frame.sex.unique()),"grade_filters":sorted(frame.grade.unique()),"stage_filters":stage_filters,"profiles":views,"model":model,"treatment_assignment":treatment,"notes":["Cancer-patient records, not a survivor-only cohort.","No cross-cancer pooling or cross-archive linkage.","Stage is sourced only where an explicit stage field exists; grade is not a stage proxy.","Treatment model predicts source-recorded surgery assignment; it cannot identify treatment benefit or recommend care.","EDA and model-eligible populations are distinct.","Surgery, radiation and chemotherapy patterns are descriptive; no treatment is recommended.","Timing is first-course management, not a modality-specific delay."]}
         (output/f"{cohort.lower()}.json").write_text(json.dumps(study,ensure_ascii=False,allow_nan=False),encoding="utf-8")
         studies.append({"cohort":cohort,"file":cohort.lower()+".json","stage_available":bool(source["stage_columns"])})
         del raw,frame
-        print(f"Completed {cohort} dashboard and temporal survival model",flush=True)
+        print(f"Completed {cohort} dashboard and patient-holdout models",flush=True)
     (output/"catalog.json").write_text(json.dumps({"synthetic":synthetic,"classification":"SYNTHETIC DEMONSTRATION" if synthetic else "CONFIDENTIAL LOCAL RESEARCH","studies":studies},indent=2),encoding="utf-8")
 
 

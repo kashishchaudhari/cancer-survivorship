@@ -1,14 +1,18 @@
 # Cancer Survivorship: Care Patterns & Outcomes Atlas
 
-An interactive healthcare data-science portfolio project for exploring five cancer cohorts independently, auditing recorded care, and evaluating time-aware prediction models. The project is designed to make the analysis inspectable: visitors can see how cohort definitions, missing data, model evaluation, and source limitations shape the conclusions.
+An interactive healthcare data-science portfolio project for exploring five cancer cohorts independently, auditing recorded care, and evaluating patient-holdout prediction models. The project is designed to make the analysis inspectable: visitors can see how cohort definitions, missing data, model evaluation, and source limitations shape the conclusions.
 
 ## What a first-time visitor should take away
 
 This project analyzes five supplied cancer studies: Brain, Breast, Prostate, Skin, and Liver. They remain separate because their source files and available fields differ. Four coursework extracts have no usable stage field; only the separate Liver extract includes a summary-stage field. The dashboard therefore does not quietly fill in missing stage or merge incompatible cohorts.
 
-The analysis describes recorded treatment patterns and evaluates whether selected patient and tumor descriptors predict historical surgery coding. It also compares later-year all-cause survival predictions with a cohort baseline. These are exploratory results from the supplied files. The most important conclusion is a boundary: these data and models do not establish which treatment works best for an individual. Treatment codes are incomplete, and factors that influence treatment choice are not captured well enough for a causal treatment-benefit claim.
+The analysis describes recorded treatment patterns and evaluates whether selected patient and tumor descriptors predict historical surgery coding. It also compares held-out all-cause survival predictions with a cohort baseline. These are exploratory results from the supplied files. The most important conclusion is a boundary: these data and models do not establish which treatment works best for an individual. Treatment codes are incomplete, and factors that influence treatment choice are not captured well enough for a causal treatment-benefit claim.
 
-The source files, patient-level rows, individual predictions, and local runtime outputs are confidential and are not included here. With the dataset owner’s approval, this repository publishes one specific set of whole-cohort results: the [approved aggregate results report](docs/RESULTS_SUMMARY.md). The report contains no raw records or subgroup breakdowns. The public demo values are synthetic and have no clinical meaning.
+The source files, patient-level rows, individual predictions, and local runtime outputs are confidential and are not included here. With the dataset owner’s approval, this repository publishes the requested whole-cohort results: the [aggregate results report](docs/RESULTS_SUMMARY.md) and [Liver case study](docs/LIVER_STUDY.md). These reports contain no raw records or subgroup breakdowns. The public demo values are synthetic and have no clinical meaning.
+
+## Featured study: Liver
+
+Liver leads the case study because its raw extract includes an explicit summary-stage field, enabling a stage-aware analysis. The model predicts recorded surgery coding; it does not identify treatment benefit. See the [Liver case study](docs/LIVER_STUDY.md) for the refreshed patient-holdout results, baseline comparisons, and temporal sensitivity. The public interactive demo opens on Liver and uses invented values; the linked report contains the real whole-cohort findings.
 
 ## Explore the dashboard
 
@@ -19,14 +23,14 @@ Run the project locally with authorized source files to explore:
 - age and recorded-sex distributions, treatment-timing histograms, cumulative distributions, and box plots with standard deviation, variance, median, and IQR;
 - separate surgery, radiation, and chemotherapy coding views, plus age-by-grade and (Liver only) stage-by-age views;
 - all-cause Kaplan–Meier curves with confidence bands, follow-up distributions, and subgroup horizon tables;
-- later-year survival-model evaluation against a cohort baseline, including IPCW Brier scores, calibration, and subgroup concordance;
+- patient-holdout survival-model evaluation against a cohort baseline, including IPCW Brier scores, calibration, and subgroup concordance;
 - a separate surgery-recording model for each study, evaluated against test-set prevalence with average precision, ROC AUC, Brier score, and calibration.
 
 Filters apply only to the selected cancer. Small descriptive counts are suppressed. Model outputs describe a historical code pattern, not a treatment recommendation, prognosis, or clinical risk score.
 
 ## How the project compares with published guidance
 
-This is a methods comparison, not a head-to-head performance benchmark. Published models use different populations, endpoints, predictors, and validation settings, so their AUC or other scores cannot be compared fairly with this project's private, internal results. The project follows several good practices—explicit cohorts and endpoints, temporal holdout, baseline comparisons, calibration, and clear data limitations—but it is **not** externally validated or ready for clinical use. It does not establish clinical utility or treatment benefit. See [the literature and methods comparison](docs/LITERATURE_CONTEXT.md) for the alignment and gaps.
+This is a methods comparison, not a head-to-head performance benchmark. Published models use different populations, endpoints, predictors, and validation settings, so their AUC or other scores cannot be compared fairly with this project's private, internal results. The project follows several good practices—explicit cohorts and endpoints, patient holdout with development cross-validation and temporal sensitivity, baseline comparisons, calibration, and clear data limitations—but it is **not** externally validated or ready for clinical use. It does not establish clinical utility or treatment benefit. See [the literature and methods comparison](docs/LITERATURE_CONTEXT.md) for the alignment and gaps.
 
 The reporting checklist in [TRIPOD+AI](https://www.bmj.com/content/385/bmj-2023-078378) and appraisal questions in [PROBAST+AI](https://www.bmj.com/content/388/bmj-2024-082505) are useful references for prediction-model studies. SEER's [treatment-data limitations](https://seer.cancer.gov/data-software/documentation/seerstat/nov2025/treatment-limitations-nov2025.html) explain why recorded treatment and timing fields require cautious interpretation.
 
@@ -36,7 +40,7 @@ The four coursework archives are `BrainCancerProjectSpring2025.rar`, `BreatCance
 
 The four coursework archives do not contain a usable cancer-stage field. Their stage filters are disabled and stage is excluded from those models; grade is not a substitute. The separate Liver extract includes `Combined Summary Stage (2004+)`; its stage filter and model apply only to that study. The surgery model predicts historical source coding among known `00` and `01–90` surgery codes. Unknown/other codes are excluded. Area income is not personal income, and recorded treatment categories do not confirm that an unrecorded treatment was not received.
 
-The data contain cancer-patient records, not a verified survivor-only population. Results describe internal evaluation of the supplied coursework extracts. They are not causal treatment effects, validated population estimates, or clinical recommendations. The [approved aggregate report](docs/RESULTS_SUMMARY.md) is the specific public disclosure. See the [dataset card](docs/DATASET_CARD.md) and [treatment model study design](docs/TREATMENT_MODEL.md) for detailed provenance, fields, targets, splits, and limitations.
+The data contain cancer-patient records, not a verified survivor-only population. Results describe internal evaluation of the supplied coursework extracts. They are not causal treatment effects, validated population estimates, or clinical recommendations. The [aggregate report](docs/RESULTS_SUMMARY.md) and [Liver case study](docs/LIVER_STUDY.md) are the requested public disclosures. See the [dataset card](docs/DATASET_CARD.md) and [treatment model study design](docs/TREATMENT_MODEL.md) for detailed provenance, fields, targets, splits, and limitations.
 
 ## Run locally
 
