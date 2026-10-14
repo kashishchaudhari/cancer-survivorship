@@ -1,5 +1,5 @@
 [project]
-name = "cancer-suicide-risk-analysis"
+name = "cancer-survivorship-atlas"
 version = "0.1.0"
 description = "Privacy-aware cancer cohort pipelines, treatment patterns, and temporal survival evaluation"
 requires-python = ">=3.12,<3.13"

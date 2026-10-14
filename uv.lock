@@ -34,7 +34,7 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/85/ae/7f2031ea76140444b2453fa139041e5afd4a09fc5300cfefeb1103291f80/autograd-gamma-0.5.0.tar.gz", hash = "sha256:f27abb7b8bb9cffc8badcbf59f3fe44a9db39e124ecacf1992b6d952934ac9c4", size = 3952, upload-time = "2020-10-15T16:51:06.785Z" }
 
 [[package]]
-name = "cancer-suicide-risk-analysis"
+name = "cancer-survivorship-atlas"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
