@@ -8,9 +8,21 @@ This project analyzes five supplied cancer studies: Brain, Breast, Prostate, Ski
 
 The analysis describes recorded treatment patterns and evaluates whether selected patient and tumor descriptors predict historical surgery coding. It also compares held-out all-cause survival predictions with a cohort baseline. These are exploratory results from the supplied files. The most important conclusion is a boundary: these data and models do not establish which treatment works best for an individual. Treatment codes are incomplete, and factors that influence treatment choice are not captured well enough for a causal treatment-benefit claim.
 
-The source files, patient-level rows, individual predictions, and local runtime outputs are confidential and are not included here. With the dataset owner’s approval, this repository publishes the requested whole-cohort results: the [aggregate results report](docs/RESULTS_SUMMARY.md) and [Liver case study](docs/LIVER_STUDY.md). These reports contain no raw records or subgroup breakdowns. The public demo values are synthetic and have no clinical meaning.
+The source files, patient-level rows, individual predictions, and local runtime outputs are confidential and are not included here. With the dataset owner’s approval, this repository publishes the requested whole-cohort results: the [aggregate results report](docs/RESULTS_SUMMARY.md) and [five cancer case studies](docs/CASE_STUDIES.md). These reports contain no raw records or subgroup breakdowns. The public demo values are synthetic and have no clinical meaning.
 
-## Featured study: Liver
+## Case studies across all five cancers
+
+The original dashboard and the five-cancer Atlas are both available. The Atlas keeps its distributions, care views, survival comparisons, filters, and research-model layout; the evaluation now uses patient holdouts with development-only cross-validation for **every cancer**.
+
+| Cancer | ROC AUC (95% fixed-model interval) | Average precision | Prevalence baseline | Case study |
+| --- | ---: | ---: | ---: | --- |
+| Brain | 0.609 (0.583–0.633) | 0.786 | 0.736 | [Brain report](docs/BRAIN_STUDY.md) |
+| Breast | 0.716 (0.704–0.728) | 0.951 | 0.908 | [Breast report](docs/BREAST_STUDY.md) |
+| Prostate | 0.695 (0.688–0.701) | 0.544 | 0.368 | [Prostate report](docs/PROSTATE_STUDY.md) |
+| Skin | 0.568 (0.549–0.589) | 0.942 | 0.929 | [Skin report](docs/SKIN_STUDY.md) |
+| Liver | 0.823 (0.809–0.836) | 0.601 | 0.236 | [Liver report](docs/LIVER_STUDY.md) |
+
+Each score describes an independent supplied cohort; high average precision must be read against its prevalence. [Compare the five case studies](docs/CASE_STUDIES.md).
 
 Liver leads the case study because its raw extract includes an explicit summary-stage field, enabling a stage-aware analysis. The model predicts recorded surgery coding; it does not identify treatment benefit. See the [Liver case study](docs/LIVER_STUDY.md) for the refreshed patient-holdout results, baseline comparisons, and temporal sensitivity. The public interactive demo opens on Liver and uses invented values; the linked report contains the real whole-cohort findings.
 
@@ -20,7 +32,9 @@ Liver’s refreshed surgery-code model achieved **ROC AUC 0.823** (95% fixed-mod
 
 ## Explore the dashboard
 
-**Public interactive demo:** [Open the Cancer Patient Atlas](https://kashishchaudhari.github.io/cancer-survivorship/). This GitHub Pages site is built from invented fixtures only. It contains no supplied dataset or real-data results; individual profile scoring is disabled. The real-data dashboard and its outputs remain local.
+**Original dashboard:** [Open the Survivorship Observatory](https://kashishchaudhari.github.io/cancer-survivorship/observatory/). Its KPI, exploratory, care, competing-risk, and pipeline views retain the earlier presentation and use invented fixtures. Its suicide-outcome analysis remains separate from the new surgery and all-cause survival models.
+
+**Five-cancer interactive demo:** [Open the Cancer Patient Atlas](https://kashishchaudhari.github.io/cancer-survivorship/). This GitHub Pages site is built from invented fixtures only. It contains no supplied dataset or real-data results; individual profile scoring is disabled. The real-data dashboard and its outputs remain local.
 
 Run the project locally with authorized source files to explore:
 
@@ -68,6 +82,13 @@ uv run python scripts/patient_server.py --site .runtime/patient-demo-site --mode
 ```
 
 Every demo page labels invented values. They have no clinical meaning.
+
+To include the original observatory alongside the invented Atlas demo:
+
+```powershell
+uv run python scripts/generate_demo_data.py --output .runtime/observatory-demo-data
+uv run python scripts/build_dashboard_static.py --source .runtime/observatory-demo-data --target .runtime/patient-demo-site/observatory --synthetic
+```
 
 ## Quality checks
 

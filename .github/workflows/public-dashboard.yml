@@ -1,4 +1,4 @@
-name: Publish synthetic Cancer Patient Atlas
+name: Publish synthetic cancer dashboards
 on:
   push:
     branches: [main]
@@ -25,13 +25,19 @@ jobs:
         run: uv run python scripts/patient_studies.py --synthetic --output .runtime/public-demo-source
       - name: Build static dashboard
         run: uv run python scripts/build_patient_site.py --source .runtime/public-demo-source --target .runtime/public-demo-site
+      - name: Generate original observatory fixtures
+        run: uv run python scripts/generate_demo_data.py --output .runtime/public-observatory-source
+      - name: Preserve original observatory dashboard
+        run: uv run python scripts/build_dashboard_static.py --source .runtime/public-observatory-source --target .runtime/public-demo-site/observatory --synthetic
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - name: Enforce public payload allowlist
-        run: node scripts/check_public_demo.mjs --site .runtime/public-demo-site
+        run: node scripts/check_public_demo.mjs --site .runtime/public-demo-site --with-observatory
       - name: Test dashboard interactions against invented fixtures
         run: node scripts/check_patient_dashboard.mjs --site .runtime/public-demo-site
+      - name: Test original dashboard interactions
+        run: node scripts/check_dashboard.mjs --site .runtime/public-demo-site/observatory
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

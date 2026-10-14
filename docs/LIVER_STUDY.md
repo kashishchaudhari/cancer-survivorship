@@ -50,3 +50,5 @@ To reproduce the fixed-model interval after building the real-data studies local
 ```powershell
 uv run python scripts/evaluate_liver_uncertainty.py --folder "C:\approved\Datasets" --studies .runtime/patient-studies
 ```
+
+The same patient-holdout and uncertainty analysis is available for [all five cancer studies](CASE_STUDIES.md). The [original observatory dashboard](https://kashishchaudhari.github.io/cancer-survivorship/observatory/) retains the earlier KPI, care, competing-risk and pipeline presentation.

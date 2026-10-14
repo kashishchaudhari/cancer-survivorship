@@ -2,7 +2,7 @@
 
 ## Access and permitted use
 
-The supplied cancer data is confidential and requires permission. Raw files, patient records, prediction rows, and local runtime outputs remain local. The dataset owner approved public disclosure of the whole-cohort summary in [RESULTS_SUMMARY.md](RESULTS_SUMMARY.md) and the requested [Liver case study](LIVER_STUDY.md); that approval does not extend to raw data, subgroup tables, other analyses, or future outputs. No license for code grants rights to the dataset. This card documents source, methods, and the narrow scope of that approved report.
+The supplied cancer data is confidential and requires permission. Raw files, patient records, prediction rows, and local runtime outputs remain local. The dataset owner approved public disclosure of the whole-cohort summary in [RESULTS_SUMMARY.md](RESULTS_SUMMARY.md) and the requested [five cancer case studies](CASE_STUDIES.md); that approval does not extend to raw data, subgroup tables, other analyses, or future outputs. No license for code grants rights to the dataset. This card documents source, methods, and the narrow scope of that approved report.
 
 ## What dataset is used?
 

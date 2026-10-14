@@ -64,6 +64,16 @@ vm.runInNewContext(script,{document,fetch,Plotly,Intl,Number,String,Object,Math,
 await new Promise(resolve=>setTimeout(resolve,10));
 assert.ok(rendered.has('timing-hist'),'interactive timing histogram rendered');
 assert.ok(elements.get('study-scope').textContent.startsWith('Liver'), 'Liver is the featured initial study');
+for(const cohort of ['Brain','Breast','Prostate','Skin','Liver']){
+  studyButtons.find(button=>button.dataset.study===cohort).listeners.click();
+  assert.equal(elements.get('stage').disabled,cohort!=='Liver',cohort+' stage stays scoped to source availability');
+  assert.ok(elements.get('case-study-link').href.endsWith('/'+cohort.toUpperCase()+'_STUDY.md'),cohort+' real report link');
+  viewButtons.find(button=>button.dataset.view==='treatment-model').listeners.click();
+  assert.ok(elements.get('assignment-sensitivity').children.length>0,cohort+' both surgery designs displayed');
+  viewButtons.find(button=>button.dataset.view==='evaluation').listeners.click();
+  assert.ok(elements.get('survival-sensitivity').children.length>0,cohort+' both survival designs displayed');
+}
+
 studyButtons.find(button=>button.dataset.study==='Liver').listeners.click();
 assert.equal(elements.get('stage').disabled,false,'Liver stage control is enabled');
 viewButtons.find(button=>button.dataset.view==='care').listeners.click();

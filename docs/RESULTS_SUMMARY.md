@@ -1,6 +1,6 @@
 # Cancer Patient Atlas: whole-cohort results
 
-**Disclosure scope:** This update showcases whole-cohort results as requested by the repository owner. The Liver case study adds whole-cohort evaluation and uncertainty only. Raw files, patient-level records, predictions, local runtime artifacts, and subgroup results remain private; future disclosures require their own authorization.
+**Disclosure scope:** This update showcases whole-cohort results as requested by the repository owner. The five cancer case studies add whole-cohort evaluation and uncertainty only. Raw files, patient-level records, predictions, local runtime artifacts, and subgroup results remain private; future disclosures require their own authorization.
 
 ## Updated patient-holdout evaluation
 

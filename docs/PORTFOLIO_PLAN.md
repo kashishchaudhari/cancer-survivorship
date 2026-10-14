@@ -44,3 +44,7 @@ Source reading, model fitting, real results, and dashboard data stay local. GitH
 - **Privacy:** publish code, method, and invented examples only until permission for a defined result is confirmed.
 
 See [the treatment model study design](TREATMENT_MODEL.md) for target construction, split rules, metrics and causal limits. The local [dataset card](DATASET_CARD.md) documents source schema and populations.
+
+## Preserved dashboard presentations
+
+The five-cancer Patient Atlas keeps its original chart and filter layout, with patient-holdout and temporal-sensitivity evaluation for every cohort. The earlier Survivorship Observatory retains its KPI, exploratory, care, competing-risk, and pipeline views at `/observatory/`. Both public dashboards use invented fixtures. Real whole-cohort results are reported in [all five case studies](CASE_STUDIES.md); endpoints and analysis populations remain separate.
