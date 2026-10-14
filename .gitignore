@@ -1,0 +1,33 @@
+.venv/
+node_modules/
+.runtime/
+.tools/
+.uv-cache/
+__pycache__/
+*.pyc
+data/local/
+outputs/local/
+legacy/
+.pbi/
+powerbi/_qa/
+*.inspect.ndjson
+*.pbix
+*.zip
+.Rhistory
+.RData
+.Rproj.user/
+# Aggregate outputs from the ID-bearing raw ZIP reanalysis
+outputs/raw_zip_*.csv
+outputs/raw_zip_*.json
+# Confidential inputs and all derived results remain local, including aggregates.
+outputs/
+dashboard/data/
+powerbi/*.xlsx
+docs/RESULTS.md
+docs/CARE_EQUITY.md
+PROJECT_REVIEW.md
+*.rar
+*.xlsx
+*.xlsb
+*.parquet
+*.sav
