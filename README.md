@@ -8,7 +8,7 @@ This project analyzes five supplied cancer studies: Brain, Breast, Prostate, Ski
 
 The analysis describes recorded treatment patterns and evaluates whether selected patient and tumor descriptors predict historical surgery coding. It also compares later-year all-cause survival predictions with a cohort baseline. These are exploratory results from the supplied files. The most important conclusion is a boundary: these data and models do not establish which treatment works best for an individual. Treatment codes are incomplete, and factors that influence treatment choice are not captured well enough for a causal treatment-benefit claim.
 
-The source data and all real-data outputs are confidential and are not included here. The public repository contains analysis code, methods, and invented CI fixtures. **No real cohort counts, model scores, charts, predictions, or patient records are published.** The demo values are synthetic and have no clinical meaning.
+The source files, patient-level rows, individual predictions, and local runtime outputs are confidential and are not included here. With the dataset owner’s approval, this repository publishes one specific set of whole-cohort results: the [approved aggregate results report](docs/RESULTS_SUMMARY.md). The report contains no raw records or subgroup breakdowns. The public demo values are synthetic and have no clinical meaning.
 
 ## Explore the dashboard
 
@@ -36,7 +36,7 @@ The four coursework archives are `BrainCancerProjectSpring2025.rar`, `BreatCance
 
 The four coursework archives do not contain a usable cancer-stage field. Their stage filters are disabled and stage is excluded from those models; grade is not a substitute. The separate Liver extract includes `Combined Summary Stage (2004+)`; its stage filter and model apply only to that study. The surgery model predicts historical source coding among known `00` and `01–90` surgery codes. Unknown/other codes are excluded. Area income is not personal income, and recorded treatment categories do not confirm that an unrecorded treatment was not received.
 
-The data contain cancer-patient records, not a verified survivor-only population. Results describe internal evaluation of the supplied coursework extracts. They are not causal treatment effects, validated population estimates, or clinical recommendations. Confirm the dataset's data-use terms before sharing any data-derived result. See the [dataset card](docs/DATASET_CARD.md) and [treatment model study design](docs/TREATMENT_MODEL.md) for detailed provenance, fields, targets, splits, and limitations.
+The data contain cancer-patient records, not a verified survivor-only population. Results describe internal evaluation of the supplied coursework extracts. They are not causal treatment effects, validated population estimates, or clinical recommendations. The [approved aggregate report](docs/RESULTS_SUMMARY.md) is the specific public disclosure. See the [dataset card](docs/DATASET_CARD.md) and [treatment model study design](docs/TREATMENT_MODEL.md) for detailed provenance, fields, targets, splits, and limitations.
 
 ## Run locally
 
