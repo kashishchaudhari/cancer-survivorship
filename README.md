@@ -14,6 +14,10 @@ The source files, patient-level rows, individual predictions, and local runtime 
 
 Liver leads the case study because its raw extract includes an explicit summary-stage field, enabling a stage-aware analysis. The model predicts recorded surgery coding; it does not identify treatment benefit. See the [Liver case study](docs/LIVER_STUDY.md) for the refreshed patient-holdout results, baseline comparisons, and temporal sensitivity. The public interactive demo opens on Liver and uses invented values; the linked report contains the real whole-cohort findings.
 
+Liver’s refreshed surgery-code model achieved **ROC AUC 0.823** (95% fixed-model bootstrap interval **0.809–0.836**) and **average precision 0.601**, against a **0.236** test prevalence baseline. These are internal results from the supplied sampled dataset, not clinical or population risk estimates.
+
+![Liver recorded-surgery model versus simple baselines](docs/assets/liver-evaluation.svg)
+
 ## Explore the dashboard
 
 **Public interactive demo:** [Open the Cancer Patient Atlas](https://kashishchaudhari.github.io/cancer-survivorship/). This GitHub Pages site is built from invented fixtures only. It contains no supplied dataset or real-data results; individual profile scoring is disabled. The real-data dashboard and its outputs remain local.
