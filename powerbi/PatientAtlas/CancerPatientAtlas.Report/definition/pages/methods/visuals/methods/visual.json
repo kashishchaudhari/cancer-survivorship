@@ -1,0 +1,108 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "methods",
+  "position": {
+    "x": 24,
+    "y": 214,
+    "width": 1232,
+    "height": 430,
+    "z": 0,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "textbox",
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "''"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#17363D'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFEFA'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "PRIMARY: stratified 80/20 patient holdout; development-only cross-validation selects regularization. Preprocessing is fitted within each training fold.\n\nSECONDARY: 2010–2013 development, 2014–2015 validation, 2016–2017 temporal test. Model eligibility remains 2010–2017 for the existing source era.\n\nSOURCES: Brain, Breast, Prostate and Skin coursework extracts have no usable stage. Liver uses explicit source summary stage. Grade is not a stage proxy.\n\nLIMITS: revised internal evaluation of the supplied sampled dataset. Prior results were inspected. No independent confirmatory validation, clinical risk estimate, treatment-effect claim, or individual recommendation is established.\n\nDESIGN: ratios and discrimination measures are never averaged across cancer types. Select a cancer to inspect metrics; report pages keep descriptive and model populations separate.",
+                    "textStyle": {
+                      "fontFamily": "Segoe UI",
+                      "fontSize": "14pt",
+                      "color": "#17363D"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

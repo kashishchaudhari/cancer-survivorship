@@ -46,6 +46,10 @@ Run the project locally with authorized source files to explore:
 
 Filters apply only to the selected cancer. Small descriptive counts are suppressed. Model outputs describe a historical code pattern, not a treatment recommendation, prognosis, or clinical risk score.
 
+## Power BI report
+
+[Open the editable Power BI Patient Atlas](powerbi/README.md): seven pages for all five cancers, recorded care, calibration, survival, and model comparisons. The project uses invented aggregate data and the Atlas palette. Open `powerbi/PatientAtlas/CancerPatientAtlas.pbip` in Power BI Desktop and choose Refresh. Native Desktop rendering has not yet been verified; GitHub hosts project files, not a running Power BI report.
+
 ## How the project compares with published guidance
 
 This is a methods comparison, not a head-to-head performance benchmark. Published models use different populations, endpoints, predictors, and validation settings, so their AUC or other scores cannot be compared fairly with this project's private, internal results. The project follows several good practices—explicit cohorts and endpoints, patient holdout with development cross-validation and temporal sensitivity, baseline comparisons, calibration, and clear data limitations—but it is **not** externally validated or ready for clinical use. It does not establish clinical utility or treatment benefit. See [the literature and methods comparison](docs/LITERATURE_CONTEXT.md) for the alignment and gaps.

@@ -1,0 +1,21 @@
+{
+  "name": "Patient Atlas",
+  "dataColors": [
+    "#147D70",
+    "#B88443",
+    "#477A9C",
+    "#925D66",
+    "#72835C"
+  ],
+  "background": "#F2F0E9",
+  "foreground": "#17363D",
+  "tableAccent": "#147D70",
+  "textClasses": {
+    "label": {
+      "fontFace": "Segoe UI"
+    },
+    "title": {
+      "fontFace": "Segoe UI"
+    }
+  }
+}

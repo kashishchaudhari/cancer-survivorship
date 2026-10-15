@@ -1,0 +1,206 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "comparison_table",
+  "position": {
+    "x": 24,
+    "y": 214,
+    "width": 1232,
+    "height": 430,
+    "z": 0,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Each cohort and evaluation retains its own test population'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#17363D'"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#FFFEFA'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Cohorts"
+                    }
+                  },
+                  "Property": "Cohort"
+                }
+              },
+              "queryRef": "Cohorts.Cohort",
+              "nativeQueryRef": "Cohort"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Strategies"
+                    }
+                  },
+                  "Property": "Strategy"
+                }
+              },
+              "queryRef": "Strategies.Strategy",
+              "nativeQueryRef": "Strategy"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Cohorts"
+                    }
+                  },
+                  "Property": "Surgery test patients"
+                }
+              },
+              "queryRef": "Cohorts.Surgery test patients",
+              "nativeQueryRef": "Surgery test patients"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Cohorts"
+                    }
+                  },
+                  "Property": "Surgery ROC AUC"
+                }
+              },
+              "queryRef": "Cohorts.Surgery ROC AUC",
+              "nativeQueryRef": "Surgery ROC AUC"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Cohorts"
+                    }
+                  },
+                  "Property": "Surgery average precision"
+                }
+              },
+              "queryRef": "Cohorts.Surgery average precision",
+              "nativeQueryRef": "Surgery average precision"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Cohorts"
+                    }
+                  },
+                  "Property": "Surgery prevalence"
+                }
+              },
+              "queryRef": "Cohorts.Surgery prevalence",
+              "nativeQueryRef": "Surgery prevalence"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Cohorts"
+                    }
+                  },
+                  "Property": "Surgery Brier"
+                }
+              },
+              "queryRef": "Cohorts.Surgery Brier",
+              "nativeQueryRef": "Surgery Brier"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Cohorts"
+                    }
+                  },
+                  "Property": "Survival C-index"
+                }
+              },
+              "queryRef": "Cohorts.Survival C-index",
+              "nativeQueryRef": "Survival C-index"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

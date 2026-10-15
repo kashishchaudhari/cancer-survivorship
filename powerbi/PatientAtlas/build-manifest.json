@@ -1,0 +1,23 @@
+{
+  "synthetic": true,
+  "cohorts": [
+    "Brain",
+    "Breast",
+    "Prostate",
+    "Skin",
+    "Liver"
+  ],
+  "pages": 7,
+  "table_rows": {
+    "Cohorts": 5,
+    "Strategies": 2,
+    "Horizons": 3,
+    "SurgeryEvaluation": 10,
+    "SurgeryCalibration": 50,
+    "SurvivalEvaluation": 30,
+    "TreatmentPatterns": 35,
+    "Modalities": 3
+  },
+  "data_grain": "Cohort aggregates and calibration bins; no patient rows",
+  "refresh": "Embedded aggregate snapshot; regenerate to update source results"
+}
