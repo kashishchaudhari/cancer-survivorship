@@ -1,5 +1,16 @@
 # Cancer Survivorship: Care Patterns & Outcomes Atlas
 
+**Independent healthcare analytics project by Kashish Chaudhari.**
+
+**[Explore real published research](https://kashishchaudhari.github.io/cancer-survivorship/)** · **[Read the portfolio case study](docs/PORTFOLIO_CASE_STUDY.md)** · [Code and reproducibility](#run-locally)
+
+The research homepage is an interactive presentation of actual whole-cohort
+findings already published in this repository. It shows source versus index
+counts, timing missingness, and primary versus temporal model evaluation for
+five independent studies. Patient-level files remain private. The separate
+[synthetic full-feature demo](https://kashishchaudhari.github.io/cancer-survivorship/demo.html)
+illustrates the broader interface with invented data.
+
 An interactive healthcare data-science portfolio project for exploring five cancer cohorts independently, auditing recorded care, and evaluating patient-holdout prediction models. The project is designed to make the analysis inspectable: visitors can see how cohort definitions, missing data, model evaluation, and source limitations shape the conclusions.
 
 ## What a first-time visitor should take away
@@ -8,7 +19,7 @@ This project analyzes five supplied cancer studies: Brain, Breast, Prostate, Ski
 
 The analysis describes recorded treatment patterns and evaluates whether selected patient and tumor descriptors predict historical surgery coding. It also compares held-out all-cause survival predictions with a cohort baseline. These are exploratory results from the supplied files. The most important conclusion is a boundary: these data and models do not establish which treatment works best for an individual. Treatment codes are incomplete, and factors that influence treatment choice are not captured well enough for a causal treatment-benefit claim.
 
-The source files, patient-level rows, individual predictions, and local runtime outputs are confidential and are not included here. With the dataset owner’s approval, this repository publishes the requested whole-cohort results: the [aggregate results report](docs/RESULTS_SUMMARY.md) and [five cancer case studies](docs/CASE_STUDIES.md). These reports contain no raw records or subgroup breakdowns. The public demo values are synthetic and have no clinical meaning.
+The source files, patient-level rows, individual predictions, and local runtime outputs are confidential and are not included here. With the dataset owner’s approval, this repository publishes the requested whole-cohort results: the [aggregate results report](docs/RESULTS_SUMMARY.md) and [five cancer case studies](docs/CASE_STUDIES.md). These reports contain no raw records or subgroup breakdowns. The research homepage uses those real published values; the separate full-feature demo uses invented values with no clinical meaning.
 
 ## Case studies across all five cancers
 
@@ -24,7 +35,7 @@ The original dashboard and the five-cancer Atlas are both available. The Atlas k
 
 Each score describes an independent supplied cohort; high average precision must be read against its prevalence. [Compare the five case studies](docs/CASE_STUDIES.md).
 
-Liver leads the case study because its raw extract includes an explicit summary-stage field, enabling a stage-aware analysis. The model predicts recorded surgery coding; it does not identify treatment benefit. See the [Liver case study](docs/LIVER_STUDY.md) for the refreshed patient-holdout results, baseline comparisons, and temporal sensitivity. The public interactive demo opens on Liver and uses invented values; the linked report contains the real whole-cohort findings.
+Liver leads the case study because its raw extract includes an explicit summary-stage field, enabling a stage-aware analysis. The model predicts recorded surgery coding; it does not identify treatment benefit. See the [Liver case study](docs/LIVER_STUDY.md) for the refreshed patient-holdout results, baseline comparisons, and temporal sensitivity. The research homepage opens on Liver and uses the real whole-cohort findings from the published reports.
 
 Liver’s refreshed surgery-code model achieved **ROC AUC 0.823** (95% fixed-model bootstrap interval **0.809–0.836**) and **average precision 0.601**, against a **0.236** test prevalence baseline. These are internal results from the supplied sampled dataset, not clinical or population risk estimates.
 
@@ -34,7 +45,9 @@ Liver’s refreshed surgery-code model achieved **ROC AUC 0.823** (95% fixed-mod
 
 **Original dashboard:** [Open the Survivorship Observatory](https://kashishchaudhari.github.io/cancer-survivorship/observatory/). Its KPI, exploratory, care, competing-risk, and pipeline views retain the earlier presentation and use invented fixtures. Its suicide-outcome analysis remains separate from the new surgery and all-cause survival models.
 
-**Five-cancer interactive demo:** [Open the Cancer Patient Atlas](https://kashishchaudhari.github.io/cancer-survivorship/). This GitHub Pages site is built from invented fixtures only. It contains no supplied dataset or real-data results; individual profile scoring is disabled. The real-data dashboard and its outputs remain local.
+**Real-data research explorer:** [Open the Cancer Care Research Atlas](https://kashishchaudhari.github.io/cancer-survivorship/). Explore published aggregate findings by cancer and evaluation design. No source records or individual scoring are exposed.
+
+**Synthetic full-feature demo:** [Open the engineering demonstration](https://kashishchaudhari.github.io/cancer-survivorship/demo.html). This separate interface uses invented fixtures only; individual profile scoring is disabled. The private full-data dashboard remains local.
 
 Run the project locally with authorized source files to explore:
 
@@ -102,4 +115,5 @@ uv run python -m pytest -q
 uv run python scripts/check_repository_privacy.py
 ```
 
-GitHub Actions runs tests and invented fixtures only. A separate deployment workflow publishes the synthetic static dashboard; it never accesses source archives or real-data outputs. The wider [portfolio brief](docs/PORTFOLIO_PLAN.md) explains how this Atlas stays distinct from the survivorship suicide-outcome analysis.
+GitHub Actions runs tests and invented fixtures without source-data access. The deployment workflow also builds the research homepage exclusively from the already-public aggregate Markdown reports. It never reads source archives, patient rows, predictions, or private study outputs. The wider [portfolio brief](docs/PORTFOLIO_PLAN.md) explains how this Atlas stays distinct from the survivorship suicide-outcome analysis.
+
